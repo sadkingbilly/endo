@@ -2,7 +2,6 @@
 #define TEMPLATE_H
 
 typedef enum {
-  TITEM_EMPTY,
   TITEM_BASE,
   TITEM_REF,
   TITEM_LEN,

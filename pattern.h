@@ -1,10 +1,9 @@
 #ifndef PATTERN_H
 #define PATTERN_H
 
-#include <stddef.h>
+#include "common.h"
 
 typedef enum {
-  PITEM_EMPTY,
   PITEM_BASE,
   PITEM_SKIP_N,
   PITEM_DNA_SEQ,

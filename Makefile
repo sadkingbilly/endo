@@ -6,8 +6,9 @@ CC = gcc
 %_test: common.o %.o %_test.o
 	$(CC) $? -o $@
 
-tests: pattern_test
+tests: pattern_test replace_test
 	./pattern_test
+	./replace_test
 
 clean:
 	rm -f *.o *_test
