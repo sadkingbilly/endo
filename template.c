@@ -73,7 +73,7 @@ int template(char* in_dna_seq, char* out_rna, titem_seq_t* out_template_seq) {
 
     /* Did not match any selectors, terminating. */
     break;
-	}
+  }
 
   return STATUS_OK;
 }
