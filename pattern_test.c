@@ -2,20 +2,23 @@
 #include "common.h"
 
 void pattern_test() {
-  pattern_seq_t out_pattern;
-  assert(pattern("CIIC", NULL, out_pattern));  
-  assert(out_pattern[0].type == BASE);
-  assert(out_pattern[0].base == 'I');
-  assert(out_pattern[1].type == EMPTY);
+  pitem_seq_t * out_pattern_seq = init_pattern_seq(2);
+  pitem_t* pitem_arr = out_pattern_seq->start;
+  assert(pattern("CIIC", NULL, out_pattern_seq));
+  assert(pitem_arr[0].type == PITEM_BASE);
+  assert(pitem_arr[0].base == 'I');
+  assert(out_pattern_seq->next - out_pattern_seq->start == 1);
 
-  assert(pattern("IIPIPICPIICICIIF", NULL, out_pattern));
-  assert(out_pattern[0].type == OPEN_GROUP);
-  assert(out_pattern[1].type == SKIP_N);
-  assert(out_pattern[1].skip == 2);
-  assert(out_pattern[2].type == CLOSE_GROUP);
-  assert(out_pattern[3].type == BASE);
-  assert(out_pattern[3].base == 'P');
-  assert(out_pattern[4].type == EMPTY);
+  out_pattern_seq = init_pattern_seq(5);
+  pitem_arr = out_pattern_seq->start;
+  assert(pattern("IIPIPICPIICICIIF", NULL, out_pattern_seq));
+  assert(pitem_arr[0].type == PITEM_OPEN_GROUP);
+  assert(pitem_arr[1].type == PITEM_SKIP_N);
+  assert(pitem_arr[1].skip == 2);
+  assert(pitem_arr[2].type == PITEM_CLOSE_GROUP);
+  assert(pitem_arr[3].type == PITEM_BASE);
+  assert(pitem_arr[3].base == 'P');
+  assert(out_pattern_seq->next - out_pattern_seq->start == 4);
 }
 
 int main(int unused_argc, char** unused_argv) {

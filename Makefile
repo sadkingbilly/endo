@@ -3,8 +3,13 @@ CC = gcc
 %.o : %.c
 	$(CC) -c $< -o $@
 
-%_test: %.o %_test.o
+%_test: common.o %.o %_test.o
 	$(CC) $? -o $@
 
+tests: pattern_test
+	./pattern_test
+
 clean:
-	rm *.o
+	rm -f *.o *_test
+
+.PHONY: tests clean
