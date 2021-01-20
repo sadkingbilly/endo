@@ -15,12 +15,16 @@ void protect_test() {
   expected->size = quoted->size;
   assert(dna_seq_equal(expected, quoted));
   free_dna_seq(quoted);
+  free_dna_seq(expected);
 
   quoted = protect(2, orig);
   expected = init_dna_seq_from_str("FPICCF");
   expected->size = quoted->size;
   assert(dna_seq_equal(expected, quoted));
   free_dna_seq(quoted);
+  free_dna_seq(expected);
+
+  free_dna_seq(orig);
 }
 
 void replace_test() {

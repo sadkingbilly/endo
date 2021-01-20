@@ -35,6 +35,7 @@ dna_seq_t* protect(int prot_level, dna_seq_t* dna_seq) {
     out = clone_dna_seq(tmp);
     tmp->end = tmp->start;
   }
+  free_dna_seq(tmp);
 
   return out;
 }

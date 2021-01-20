@@ -18,6 +18,11 @@ pitem_seq_t* init_pattern_seq(size_t size) {
   return seq;
 }
 
+void free_pattern_seq(pitem_seq_t* pitem_seq) {
+  free(pitem_seq->start);
+  free(pitem_seq);
+}
+
 void consts(char** dna_seq_ptr_ptr, char* out_buf, size_t out_buf_size) {
   char base = **dna_seq_ptr_ptr;
   char next_base = *(*dna_seq_ptr_ptr + 1);

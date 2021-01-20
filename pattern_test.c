@@ -8,6 +8,7 @@ void pattern_test() {
   assert(pitem_arr[0].type == PITEM_BASE);
   assert(pitem_arr[0].base == 'I');
   assert(out_pattern_seq->next - out_pattern_seq->start == 1);
+  free_pattern_seq(out_pattern_seq);
 
   out_pattern_seq = init_pattern_seq(5);
   pitem_arr = out_pattern_seq->start;
@@ -19,6 +20,7 @@ void pattern_test() {
   assert(pitem_arr[3].type == PITEM_BASE);
   assert(pitem_arr[3].base == 'P');
   assert(out_pattern_seq->next - out_pattern_seq->start == 4);
+  free_pattern_seq(out_pattern_seq);
 }
 
 int main(int unused_argc, char** unused_argv) {

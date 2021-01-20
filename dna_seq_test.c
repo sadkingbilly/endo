@@ -5,12 +5,14 @@ void init_dna_seq_test() {
   dna_seq_t* dna_seq = init_dna_seq();
   assert(dna_seq->size == DNA_SEQ_INIT_SIZE);
   assert(dna_seq->start == dna_seq->end);
+  free_dna_seq(dna_seq);
 }
 
 void init_dna_seq_with_size_test() {
   dna_seq_t* dna_seq = init_dna_seq_with_size(64);
   assert(dna_seq->size == 64);
   assert(dna_seq->start == dna_seq->end);
+  free_dna_seq(dna_seq);
 }
 
 void init_dna_seq_from_str_test() {
@@ -23,6 +25,7 @@ void init_dna_seq_from_str_test() {
   append_to_dna_seq(dna_seq, 'P');
 
   assert(dna_seq_equal(dna_seq, expected));
+  free_dna_seq(dna_seq);
 }
 
 void dna_seq_append_test() {
@@ -41,6 +44,7 @@ void dna_seq_append_test() {
 
   append_to_dna_seq(dna_seq, '\0');
   assert(strcmp(dna_seq->start, "ICFP") == 0);
+  free_dna_seq(dna_seq);
 }
 
 void dna_seq_realloc_test() {
@@ -51,6 +55,8 @@ void dna_seq_realloc_test() {
   /* Overflowing the original size should trigger realloc. */
   assert(dna_seq->size == DNA_SEQ_SIZE_FACTOR * DNA_SEQ_INIT_SIZE);
   assert(dna_seq->end - dna_seq->start == DNA_SEQ_INIT_SIZE + 4);
+
+  free_dna_seq(dna_seq);
 }
 
 void clone_dna_seq_test() {
@@ -61,6 +67,9 @@ void clone_dna_seq_test() {
   dna_seq_t* cloned_dna_seq = clone_dna_seq(dna_seq);
   assert(cloned_dna_seq->size == DNA_SEQ_INIT_SIZE);
   assert(cloned_dna_seq->end - cloned_dna_seq->start == 10);
+
+  free_dna_seq(cloned_dna_seq);
+  free_dna_seq(dna_seq);
 }
 
 void dna_seq_equal_test() {
@@ -87,6 +96,8 @@ void dna_seq_equal_test() {
   two->start[3] = 'P';
   assert(!dna_seq_equal(one, two));
   free_dna_seq(two);
+
+  free_dna_seq(one);
 }
   
 
