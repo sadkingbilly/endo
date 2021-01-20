@@ -40,8 +40,20 @@ dna_seq_t* protect(int prot_level, dna_seq_t* dna_seq) {
   return out;
 }
 
-dna_seq_t* asnat(int len, env_t* env) {
-  return init_dna_seq();
+/* Potential optimization: may be precalculated. */
+dna_seq_t* asnat(int n) {
+  assert(n >= 0);
+  dna_seq_t* dna_seq = init_dna_seq();
+  while (n) {
+    if (n % 2) {
+      append_to_dna_seq(dna_seq, 'C');
+    } else {
+      append_to_dna_seq(dna_seq, 'I');
+    }
+    n = n / 2;
+  }
+  append_to_dna_seq(dna_seq, 'P');
+  return dna_seq;
 }
 
 void replace(titem_seq_t* template_seq, env_t* env, dna_seq_t* out_dna_seq) {
@@ -62,7 +74,7 @@ void replace(titem_seq_t* template_seq, env_t* env, dna_seq_t* out_dna_seq) {
         free_dna_seq(protect_dna_seq);
         break;
       case TITEM_LEN:
-        asnat_dna_seq = asnat(titem_ptr->len, env);
+        asnat_dna_seq = asnat(titem_ptr->len);
         for (char* ptr = asnat_dna_seq->start; ptr != asnat_dna_seq->end; ptr++) {
           append_to_dna_seq(out_dna_seq, *ptr);
         }
