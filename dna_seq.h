@@ -19,8 +19,10 @@ typedef struct {
 
 dna_seq_t* init_dna_seq();
 dna_seq_t* init_dna_seq_with_size(size_t size);
+dna_seq_t* init_dna_seq_from_str(char* str);
 dna_seq_t* clone_dna_seq(dna_seq_t* dna_seq);
 void free_dna_seq(dna_seq_t* dna_seq);
 void append_to_dna_seq(dna_seq_t* dna_seq, char c);
+int dna_seq_equal(dna_seq_t* one, dna_seq_t* two);
 
 #endif  /* DNA_SEQ_H */
