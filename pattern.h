@@ -4,6 +4,8 @@
 #include "common.h"
 #include "dna_seq.h"
 
+#define PATTERN_SIZE (1024)
+
 typedef enum {
   PITEM_BASE,
   PITEM_SKIP_N,
@@ -28,9 +30,9 @@ typedef struct {
   size_t size;
 } pitem_seq_t;
 
-pitem_seq_t* init_pattern_seq(size_t size);
+pitem_seq_t* init_pattern_seq();
 void free_pattern_seq(pitem_seq_t* pitem_seq);
 void emit_pitem(pitem_seq_t* out_seq, pitem_t item);
-int pattern(dna_seq_t* dna, char* out_rna, pitem_seq_t* out_pattern_seq);
+pitem_seq_t* pattern(dna_seq_t* dna, char* out_rna);
 
 #endif  /* PATTERN_H */

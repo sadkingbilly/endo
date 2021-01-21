@@ -2,10 +2,9 @@
 #include "pattern.h"
 
 void pattern_test() {
-  pitem_seq_t * out_pattern_seq = init_pattern_seq(2);
-  pitem_t* pitem_arr = out_pattern_seq->start;
   dna_seq_t* dna = init_dna_seq_from_str("CIIC");
-  assert(pattern(dna, NULL, out_pattern_seq));
+  pitem_seq_t* out_pattern_seq = pattern(dna, NULL);
+  pitem_t* pitem_arr = out_pattern_seq->start;
   assert(pitem_arr[0].type == PITEM_BASE);
   assert(pitem_arr[0].base == 'I');
   assert(out_pattern_seq->end - out_pattern_seq->start == 1);
@@ -13,22 +12,20 @@ void pattern_test() {
   free_dna_seq(dna);
 
   /* Same, but for dna->cur not coinciding with dna->start. */
-  out_pattern_seq = init_pattern_seq(2);
-  pitem_arr = out_pattern_seq->start;
   dna = init_dna_seq_from_str("FPCIIC");
   dna->cur++;
   dna->cur++;
-  assert(pattern(dna, NULL, out_pattern_seq));
+  out_pattern_seq = pattern(dna, NULL);
+  pitem_arr = out_pattern_seq->start;
   assert(pitem_arr[0].type == PITEM_BASE);
   assert(pitem_arr[0].base == 'I');
   assert(out_pattern_seq->end - out_pattern_seq->start == 1);
   free_pattern_seq(out_pattern_seq);
   free_dna_seq(dna);
 
-  out_pattern_seq = init_pattern_seq(5);
-  pitem_arr = out_pattern_seq->start;
   dna = init_dna_seq_from_str("IIPIPICPIICICIIF");
-  assert(pattern(dna, NULL, out_pattern_seq));
+  out_pattern_seq = pattern(dna, NULL);
+  pitem_arr = out_pattern_seq->start;
   assert(pitem_arr[0].type == PITEM_OPEN_GROUP);
   assert(pitem_arr[1].type == PITEM_SKIP_N);
   assert(pitem_arr[1].skip == 2);

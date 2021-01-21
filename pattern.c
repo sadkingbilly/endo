@@ -2,17 +2,16 @@
 #include "pattern.h"
 
 void emit_pitem(pitem_seq_t* out_seq, pitem_t item) {
-  assert(out_seq->size);
-  assert((out_seq->end - out_seq->start) < out_seq->size);
   *(out_seq->end) = item;
   out_seq->end++;
+  assert((out_seq->end - out_seq->start) < out_seq->size);
 }
 
-pitem_seq_t* init_pattern_seq(size_t size) {
+pitem_seq_t* init_pattern_seq() {
   pitem_seq_t* seq = (pitem_seq_t*) malloc(sizeof(pitem_seq_t));
-  seq->start = (pitem_t*) malloc(size * sizeof(pitem_t));
+  seq->start = (pitem_t*) malloc(PATTERN_SIZE * sizeof(pitem_t));
   seq->end = seq->start;
-  seq->size = size;
+  seq->size = PATTERN_SIZE;
   return seq;
 }
 
@@ -54,8 +53,9 @@ dna_seq_t* consts(dna_seq_t* dna) {
 }
 
 /* Reads from and advances dna->cur. */
-int pattern(dna_seq_t* dna, rna_t* rna, pitem_seq_t* out_pattern_seq) {
+pitem_seq_t* pattern(dna_seq_t* dna, rna_t* rna) {
   int lvl = 0;
+  pitem_seq_t* out = init_pattern_seq();
 
   while (1) {
     char selector[4] = {consume_base(dna), '\0', '\0', '\0'};
@@ -67,36 +67,36 @@ int pattern(dna_seq_t* dna, rna_t* rna, pitem_seq_t* out_pattern_seq) {
     }
 
     if (strcmp(selector, "C") == 0) {
-      emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_BASE, .base = 'I'});
+      emit_pitem(out, (pitem_t) {.type = PITEM_BASE, .base = 'I'});
       continue;
     }
     if (strcmp(selector, "F") == 0) {
-      emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_BASE, .base = 'C'});
+      emit_pitem(out, (pitem_t) {.type = PITEM_BASE, .base = 'C'});
       continue;
     }
     if (strcmp(selector, "P") == 0) {
-      emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_BASE, .base = 'F'});
+      emit_pitem(out, (pitem_t) {.type = PITEM_BASE, .base = 'F'});
       continue;
     }
     if (strcmp(selector, "IC") == 0) {
-      emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_BASE, .base = 'P'});
+      emit_pitem(out, (pitem_t) {.type = PITEM_BASE, .base = 'P'});
       continue;
     }
     if (strcmp(selector, "IP") == 0) {
       /* Calls to nat() advance dna->cur and may terminate the program by calling finish(). */
       int n = nat(dna, rna);
-      emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_SKIP_N, .skip = n});
+      emit_pitem(out, (pitem_t) {.type = PITEM_SKIP_N, .skip = n});
       continue;
     }
     if (strcmp(selector, "IF") == 0) {
       /* Special consumption of extra base (unused) for 'IF' case. */
       consume_base(dna);
-      emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_DNA_SEQ, .dna_seq = consts(dna)});
+      emit_pitem(out, (pitem_t) {.type = PITEM_DNA_SEQ, .dna_seq = consts(dna)});
       continue;
     }
     if (strcmp(selector, "IIP") == 0) {
       lvl++;
-      emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_OPEN_GROUP});
+      emit_pitem(out, (pitem_t) {.type = PITEM_OPEN_GROUP});
       continue;
     }
     if (strcmp(selector, "IIC") == 0 || strcmp(selector, "IIF") == 0) {
@@ -104,7 +104,7 @@ int pattern(dna_seq_t* dna, rna_t* rna, pitem_seq_t* out_pattern_seq) {
         break;
       }
       lvl--;
-      emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_CLOSE_GROUP});
+      emit_pitem(out, (pitem_t) {.type = PITEM_CLOSE_GROUP});
       continue;
     }
     if (strcmp(selector, "III") == 0) {
@@ -118,5 +118,5 @@ int pattern(dna_seq_t* dna, rna_t* rna, pitem_seq_t* out_pattern_seq) {
     break;
   }
 
-  return STATUS_OK;
+  return out;
 }
