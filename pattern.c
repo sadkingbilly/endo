@@ -101,7 +101,7 @@ pitem_seq_t* pattern(dna_seq_t* dna, rna_t* rna) {
     }
     if (strcmp(selector, "IIC") == 0 || strcmp(selector, "IIF") == 0) {
       if (lvl == 0) {
-        break;
+        return out;
       }
       lvl--;
       emit_pitem(out, (pitem_t) {.type = PITEM_CLOSE_GROUP});
@@ -121,5 +121,8 @@ pitem_seq_t* pattern(dna_seq_t* dna, rna_t* rna) {
     break;
   }
 
-  return out;
+  /* finish() does not return. */
+  finish(rna);
+  /* Not reached. */
+  return NULL;
 }

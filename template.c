@@ -67,10 +67,16 @@ titem_seq_t* template(dna_seq_t* dna, rna_t* rna) {
       dna->cur += rna_size;
       continue;
     }
+    if (strcmp(selector, "IIC") == 0 || strcmp(selector, "IIF") == 0) {
+      return out;
+    }
 
     /* Did not match any selectors, terminating. */
     break;
   }
 
-  return out;
+  /* finish() does not return. */
+  finish(rna);
+  /* Not reached. */
+  return NULL;
 }

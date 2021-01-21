@@ -13,12 +13,14 @@ void free_rna_data(rna_t* rna) {
   }
 }
 
-void write_rna(rna_t* rna) {
+/* Outputs RNA and terminates the program. */
+void finish(rna_t* rna) {
   char** ptr = rna->data;
   while (ptr != rna->end) {
     printf("[%d] %s\n", ptr - rna->data, *ptr);
     ptr++;
   }
+  exit(0);
 }
 
 void emit_rna(rna_t* rna, char* src, size_t size) {

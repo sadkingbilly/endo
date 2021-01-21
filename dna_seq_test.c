@@ -110,6 +110,32 @@ void dna_seq_equal_test() {
 
   free_dna_seq(one);
 }
+
+void nat_test() {
+  dna_seq_t* dna;
+
+  /* All test sequences must have 'P' in them, otherwise nat() */
+  /* will reach the end of the sequence and call finish().     */
+  dna = init_dna_seq_from_str("P");
+  assert(nat(dna, NULL) == 0);
+  free_dna_seq(dna);
+
+  dna = init_dna_seq_from_str("FP");
+  assert(nat(dna, NULL) == 0);
+  free_dna_seq(dna);
+
+  dna = init_dna_seq_from_str("CP");
+  assert(nat(dna, NULL) == 1);
+  free_dna_seq(dna);
+
+  dna = init_dna_seq_from_str("FCP");
+  assert(nat(dna, NULL) == 2);
+  free_dna_seq(dna);
+
+  dna = init_dna_seq_from_str("CFCP");
+  assert(nat(dna, NULL) == 5);
+  free_dna_seq(dna);
+}
   
 
 int main(int unused_argc, char** unused_argv) {
@@ -120,4 +146,5 @@ int main(int unused_argc, char** unused_argv) {
   dna_seq_realloc_test();
   clone_dna_seq_test();
   dna_seq_equal_test();
+  nat_test();
 }

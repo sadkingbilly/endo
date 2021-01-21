@@ -13,6 +13,6 @@ typedef struct {
 void init_rna(rna_t* rna);
 void emit_rna(rna_t* rna, char* src, size_t size);
 void free_rna_data(rna_t* rna);
-void write_rna(rna_t* rna);
+void finish(rna_t* rna);
 
 #endif  /* RNA_H */

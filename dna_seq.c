@@ -57,16 +57,15 @@ int nat(dna_seq_t* dna, rna_t* rna) {
       return 0;
     case 'I':
     case 'F':
-      n = nat(dna, rna);
-      return n == STATUS_FINISH ? STATUS_FINISH : 2 * n;
+      return 2 * nat(dna, rna);
     case 'C':
-      n = nat(dna, rna);
-      return n == STATUS_FINISH ? STATUS_FINISH : 2 * n + 1;
+      return 2 * nat(dna, rna) + 1;
   }
 
-  /* Can only be a termination character. */
-  assert(base == '\0');
-  return STATUS_FINISH;
+  /* finish() does not return. */
+  finish(rna);
+  /* Not reached. */
+  return -1;
 }
 
 void append_to_dna_seq(dna_seq_t* dna_seq, char c) {
