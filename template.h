@@ -3,6 +3,8 @@
 
 #include "dna_seq.h"
 
+#define TEMPLATE_SIZE (1024)
+
 typedef enum {
   TITEM_BASE,
   TITEM_REF,
@@ -26,8 +28,8 @@ typedef struct {
   size_t size;
 } titem_seq_t;
 
-titem_seq_t* init_template_seq(size_t size);
+titem_seq_t* init_template_seq();
 void emit_titem(titem_seq_t* out_seq, titem_t item);
-int template(dna_seq_t* dna, char* out_rna, titem_seq_t* out_template_seq);
+titem_seq_t* template(dna_seq_t* dna, char* out_rna);
 
 #endif  /* TEMPLATE_H */
