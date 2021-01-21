@@ -47,6 +47,14 @@ void append_to_dna_seq(dna_seq_t* dna_seq, char c) {
   }
 }
 
+char get_from_dna_seq(dna_seq_t* dna_seq, size_t pos) {
+  if (dna_seq->start + pos < dna_seq->end) {
+    return dna_seq->start[pos];
+  } else {
+    return '\0';
+  }
+}
+
 int dna_seq_equal(dna_seq_t* one, dna_seq_t* two) {
   if (one->size != two->size) {
     return 0;

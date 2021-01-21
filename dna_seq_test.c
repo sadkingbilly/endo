@@ -47,6 +47,17 @@ void dna_seq_append_test() {
   free_dna_seq(dna_seq);
 }
 
+void get_from_dna_seq_test() {
+  dna_seq_t* dna_seq = init_dna_seq_from_str("ICFP");
+  assert(get_from_dna_seq(dna_seq, 0) == 'I');
+  assert(get_from_dna_seq(dna_seq, 1) == 'C');
+  assert(get_from_dna_seq(dna_seq, 2) == 'F');
+  assert(get_from_dna_seq(dna_seq, 3) == 'P');
+  assert(get_from_dna_seq(dna_seq, 4) == '\0');
+  assert(get_from_dna_seq(dna_seq, 32) == '\0');
+  free_dna_seq(dna_seq);
+}
+
 void dna_seq_realloc_test() {
   dna_seq_t* dna_seq = init_dna_seq();
   for (int i = 0; i < DNA_SEQ_INIT_SIZE + 4; i++) {
@@ -105,6 +116,7 @@ int main(int unused_argc, char** unused_argv) {
   init_dna_seq_test();
   init_dna_seq_with_size_test();
   dna_seq_append_test();
+  get_from_dna_seq_test();
   dna_seq_realloc_test();
   clone_dna_seq_test();
   dna_seq_equal_test();

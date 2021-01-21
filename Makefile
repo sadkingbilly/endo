@@ -7,10 +7,11 @@ CFLAGS := -fsanitize=address -g
 %_test: common.o dna_seq.o %.o %_test.o
 	$(CC) $(CFLAGS) $? -o $@
 
-tests: pattern_test replace_test dna_seq_test
+tests: dna_seq_test pattern_test replace_test matchreplace_test
+	./dna_seq_test
 	./pattern_test
 	./replace_test
-	./dna_seq_test
+	./matchreplace_test
 
 clean:
 	rm -f *.o *_test
