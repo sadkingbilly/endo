@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "dna_seq.h"
+#include "rna.h"
 
 #define PATTERN_SIZE (1024)
 
@@ -33,6 +34,6 @@ typedef struct {
 pitem_seq_t* init_pattern_seq();
 void free_pattern_seq(pitem_seq_t* pitem_seq);
 void emit_pitem(pitem_seq_t* out_seq, pitem_t item);
-pitem_seq_t* pattern(dna_seq_t* dna, char* out_rna);
+pitem_seq_t* pattern(dna_seq_t* dna, rna_t* rna);
 
 #endif  /* PATTERN_H */

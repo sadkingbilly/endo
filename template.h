@@ -2,6 +2,7 @@
 #define TEMPLATE_H
 
 #include "dna_seq.h"
+#include "rna.h"
 
 #define TEMPLATE_SIZE (1024)
 
@@ -30,6 +31,6 @@ typedef struct {
 
 titem_seq_t* init_template_seq();
 void emit_titem(titem_seq_t* out_seq, titem_t item);
-titem_seq_t* template(dna_seq_t* dna, char* out_rna);
+titem_seq_t* template(dna_seq_t* dna, rna_t* rna);
 
 #endif  /* TEMPLATE_H */

@@ -2,6 +2,7 @@
 #define DNA_SEQ_H
 
 #include "common.h"
+#include "rna.h"
 
 /* Default initial size of the sequence. */
 #define DNA_SEQ_INIT_SIZE (32)

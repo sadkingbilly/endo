@@ -108,9 +108,12 @@ pitem_seq_t* pattern(dna_seq_t* dna, rna_t* rna) {
       continue;
     }
     if (strcmp(selector, "III") == 0) {
-      for (int i = 0; i < 7; i++) {
-        *rna++ = consume_base(dna);
+      size_t rna_size = dna->end - dna->cur;
+      if (rna_size > 7) {
+        rna_size = 7;
       }
+      emit_rna(rna, dna->cur, rna_size);
+      dna->cur += rna_size;
       continue;
     }
 
