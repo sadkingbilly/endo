@@ -23,7 +23,7 @@ typedef struct {
 
 typedef struct {
   pitem_t* start;
-  pitem_t* next;
+  pitem_t* end;
   size_t size;
 } pitem_seq_t;
 

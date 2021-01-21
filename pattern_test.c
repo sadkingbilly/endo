@@ -7,7 +7,7 @@ void pattern_test() {
   assert(pattern("CIIC", NULL, out_pattern_seq));
   assert(pitem_arr[0].type == PITEM_BASE);
   assert(pitem_arr[0].base == 'I');
-  assert(out_pattern_seq->next - out_pattern_seq->start == 1);
+  assert(out_pattern_seq->end - out_pattern_seq->start == 1);
   free_pattern_seq(out_pattern_seq);
 
   out_pattern_seq = init_pattern_seq(5);
@@ -19,7 +19,7 @@ void pattern_test() {
   assert(pitem_arr[2].type == PITEM_CLOSE_GROUP);
   assert(pitem_arr[3].type == PITEM_BASE);
   assert(pitem_arr[3].base == 'P');
-  assert(out_pattern_seq->next - out_pattern_seq->start == 4);
+  assert(out_pattern_seq->end - out_pattern_seq->start == 4);
   free_pattern_seq(out_pattern_seq);
 }
 

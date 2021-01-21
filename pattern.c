@@ -5,15 +5,15 @@
 
 void emit_pitem(pitem_seq_t* out_seq, pitem_t item) {
   assert(out_seq->size);
-  assert((out_seq->next - out_seq->start) < out_seq->size);
-  *(out_seq->next) = item;
-  out_seq->next++;
+  assert((out_seq->end - out_seq->start) < out_seq->size);
+  *(out_seq->end) = item;
+  out_seq->end++;
 }
 
 pitem_seq_t* init_pattern_seq(size_t size) {
   pitem_seq_t* seq = (pitem_seq_t*) malloc(sizeof(pitem_seq_t));
   seq->start = (pitem_t*) malloc(size * sizeof(pitem_t));
-  seq->next = seq->start;
+  seq->end = seq->start;
   seq->size = size;
   return seq;
 }
