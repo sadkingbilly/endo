@@ -54,7 +54,7 @@ dna_seq_t* consts(dna_seq_t* dna) {
 }
 
 /* Reads from and advances dna->cur. */
-int pattern(dna_seq_t* dna, char* rna, pitem_seq_t* out_pattern_seq) {
+int pattern(dna_seq_t* dna, rna_t* rna, pitem_seq_t* out_pattern_seq) {
   int lvl = 0;
 
   while (1) {
@@ -83,10 +83,8 @@ int pattern(dna_seq_t* dna, char* rna, pitem_seq_t* out_pattern_seq) {
       continue;
     }
     if (strcmp(selector, "IP") == 0) {
-      int n = nat(dna);
-      if (n == STATUS_FINISH) {
-        break;
-      }
+      /* Calls to nat() advance dna->cur and may terminate the program by calling finish(). */
+      int n = nat(dna, rna);
       emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_SKIP_N, .skip = n});
       continue;
     }

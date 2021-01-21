@@ -48,7 +48,7 @@ char consume_base(dna_seq_t* dna_seq) {
 }
 
 /* Reads from and advances dna_seq->cur. */
-int nat(dna_seq_t* dna) {
+int nat(dna_seq_t* dna, rna_t* rna) {
   int n;
   char base = consume_base(dna);
 
@@ -57,10 +57,10 @@ int nat(dna_seq_t* dna) {
       return 0;
     case 'I':
     case 'F':
-      n = nat(dna);
+      n = nat(dna, rna);
       return n == STATUS_FINISH ? STATUS_FINISH : 2 * n;
     case 'C':
-      n = nat(dna);
+      n = nat(dna, rna);
       return n == STATUS_FINISH ? STATUS_FINISH : 2 * n + 1;
   }
 

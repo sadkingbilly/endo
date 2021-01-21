@@ -1,7 +1,7 @@
 #ifndef DNA_SEQ_H
 #define DNA_SEQ_H
 
-#include <stddef.h>
+#include "common.h"
 
 /* Default initial size of the sequence. */
 #define DNA_SEQ_INIT_SIZE (32)
@@ -25,7 +25,7 @@ dna_seq_t* init_dna_seq_from_str(char* str);
 dna_seq_t* clone_dna_seq(dna_seq_t* dna_seq);
 void free_dna_seq(dna_seq_t* dna_seq);
 char consume_base(dna_seq_t* dna_seq);
-int nat(dna_seq_t* dna);
+int nat(dna_seq_t* dna, rna_t* rna);
 void append_to_dna_seq(dna_seq_t* dna_seq, char c);
 char get_from_dna_seq(dna_seq_t* dna_seq, size_t pos);
 int dna_seq_equal(dna_seq_t* one, dna_seq_t* two);

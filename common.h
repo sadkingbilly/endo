@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef char rna_t;
+
 #define STATUS_OK     (1)
 #define STATUS_FAIL   (0)
 #define STATUS_FINISH (-1)
