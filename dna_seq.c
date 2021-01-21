@@ -7,6 +7,7 @@ long long dna_seq_realloc_count = 0;
 dna_seq_t* init_dna_seq_with_size(size_t size) {
   dna_seq_t* dna_seq = (dna_seq_t*) malloc(sizeof(dna_seq_t));
   dna_seq->start = (char*) malloc(size);
+  dna_seq->cur = dna_seq->start;
   dna_seq->end = dna_seq->start;
   dna_seq->size = size;
   dna_seq_init_count++;
@@ -34,6 +35,38 @@ dna_seq_t* clone_dna_seq(dna_seq_t *dna_seq) {
 void free_dna_seq(dna_seq_t* dna_seq) {
   free(dna_seq->start);
   free(dna_seq);
+}
+
+/* Reads from and advances dna->cur. */
+char consume_base(dna_seq_t* dna_seq) {
+  if (dna_seq->cur == dna_seq->end) {
+      return '\0';
+  }
+  char base = *dna_seq->cur;
+  dna_seq->cur++;
+  return base;
+}
+
+/* Reads from and advances dna_seq->cur. */
+int nat(dna_seq_t* dna) {
+  int n;
+  char base = consume_base(dna);
+
+  switch (base) {
+    case 'P':
+      return 0;
+    case 'I':
+    case 'F':
+      n = nat(dna);
+      return n == STATUS_FINISH ? STATUS_FINISH : 2 * n;
+    case 'C':
+      n = nat(dna);
+      return n == STATUS_FINISH ? STATUS_FINISH : 2 * n + 1;
+  }
+
+  /* Can only be a termination character. */
+  assert(base == '\0');
+  return STATUS_FINISH;
 }
 
 void append_to_dna_seq(dna_seq_t* dna_seq, char c) {

@@ -1,8 +1,6 @@
 #include "common.h"
 #include "pattern.h"
 
-#define CONSTS_BUF_SIZE (1024)
-
 void emit_pitem(pitem_seq_t* out_seq, pitem_t item) {
   assert(out_seq->size);
   assert((out_seq->end - out_seq->start) < out_seq->size);
@@ -23,46 +21,48 @@ void free_pattern_seq(pitem_seq_t* pitem_seq) {
   free(pitem_seq);
 }
 
-void consts(char** dna_seq_ptr_ptr, char* out_buf, size_t out_buf_size) {
-  char base = **dna_seq_ptr_ptr;
-  char next_base = *(*dna_seq_ptr_ptr + 1);
-
-  assert(out_buf_size > 0);
-
-  if (base == 'C') {
-    consume_base(dna_seq_ptr_ptr);
-    out_buf[0] = 'I';
-    consts(dna_seq_ptr_ptr, out_buf + 1, out_buf_size - 1);
+/* Reads from and advances dna->cur. */
+dna_seq_t* consts(dna_seq_t* dna) {
+  dna_seq_t* out = init_dna_seq();
+  char* next_ptr;
+  while (dna->cur != dna->end) {
+    switch (*dna->cur) {
+      case 'C':
+        append_to_dna_seq(out, 'I');
+        dna->cur++;
+        break;
+      case 'F':
+        append_to_dna_seq(out, 'C');
+        dna->cur++;
+        break;
+      case 'P':
+        dna->cur++;
+        append_to_dna_seq(out, 'F');
+        break;
+      case 'I':
+        next_ptr = dna->cur + 1;
+        if (next_ptr != dna->end && *next_ptr == 'C') {
+          append_to_dna_seq(out, 'P');
+          dna->cur++;
+          dna->cur++;
+        } else {
+          return out;
+        }
+    }
   }
-  if (base == 'F') {
-    consume_base(dna_seq_ptr_ptr);
-    out_buf[0] = 'C';
-    consts(dna_seq_ptr_ptr, out_buf + 1, out_buf_size - 1);
-  }
-  if (base == 'P') {
-    consume_base(dna_seq_ptr_ptr);
-    out_buf[0] = 'F';
-    consts(dna_seq_ptr_ptr, out_buf + 1, out_buf_size - 1);
-  }
-  if (base == 'I' && next_base == 'C') {
-    consume_base(dna_seq_ptr_ptr);
-    consume_base(dna_seq_ptr_ptr);
-    out_buf[0] = 'P';
-    consts(dna_seq_ptr_ptr, out_buf + 1, out_buf_size - 1);
-  }
-
-  out_buf[0] = '\0';
+  return out;
 }
 
-int pattern(char* in_dna_seq, char* out_rna, pitem_seq_t* out_pattern_seq) {
+/* Reads from and advances dna->cur. */
+int pattern(dna_seq_t* dna, char* rna, pitem_seq_t* out_pattern_seq) {
   int lvl = 0;
 
   while (1) {
-    char selector[4] = {consume_base(&in_dna_seq), '\0', '\0', '\0'};
+    char selector[4] = {consume_base(dna), '\0', '\0', '\0'};
     if (selector[0] == 'I') {
-      selector[1] = consume_base(&in_dna_seq);
+      selector[1] = consume_base(dna);
       if (selector[1] == 'I') {
-        selector[2] = consume_base(&in_dna_seq);
+        selector[2] = consume_base(dna);
       }
     }
 
@@ -83,7 +83,7 @@ int pattern(char* in_dna_seq, char* out_rna, pitem_seq_t* out_pattern_seq) {
       continue;
     }
     if (strcmp(selector, "IP") == 0) {
-      int n = nat(&in_dna_seq);
+      int n = nat(dna);
       if (n == STATUS_FINISH) {
         break;
       }
@@ -92,12 +92,8 @@ int pattern(char* in_dna_seq, char* out_rna, pitem_seq_t* out_pattern_seq) {
     }
     if (strcmp(selector, "IF") == 0) {
       /* Special consumption of extra base (unused) for 'IF' case. */
-      consume_base(&in_dna_seq);
-      /* Fixed size buffer for now. consts() has overrun detection, so this */
-      /* may be optimized, if it causes issues.                             */
-      char* consts_buf = (char *) malloc(CONSTS_BUF_SIZE);
-      consts(&in_dna_seq, consts_buf, CONSTS_BUF_SIZE);
-      emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_DNA_SEQ, .dna_seq_ptr = consts_buf});
+      consume_base(dna);
+      emit_pitem(out_pattern_seq, (pitem_t) {.type = PITEM_DNA_SEQ, .dna_seq = consts(dna)});
       continue;
     }
     if (strcmp(selector, "IIP") == 0) {
@@ -115,7 +111,7 @@ int pattern(char* in_dna_seq, char* out_rna, pitem_seq_t* out_pattern_seq) {
     }
     if (strcmp(selector, "III") == 0) {
       for (int i = 0; i < 7; i++) {
-        *out_rna++ = consume_base(&in_dna_seq);
+        *rna++ = consume_base(dna);
       }
       continue;
     }

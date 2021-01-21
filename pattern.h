@@ -2,6 +2,7 @@
 #define PATTERN_H
 
 #include "common.h"
+#include "dna_seq.h"
 
 typedef enum {
   PITEM_BASE,
@@ -18,7 +19,7 @@ typedef struct {
   /* For PITEM_SKIP_N. */
   int skip;
   /* For PITEM_DNA_SEQ. */
-  char* dna_seq_ptr;
+  dna_seq_t* dna_seq;
 } pitem_t;
 
 typedef struct {
@@ -30,6 +31,6 @@ typedef struct {
 pitem_seq_t* init_pattern_seq(size_t size);
 void free_pattern_seq(pitem_seq_t* pitem_seq);
 void emit_pitem(pitem_seq_t* out_seq, pitem_t item);
-int pattern(char* in_dna_seq, char* out_rna, pitem_seq_t* out_pattern_seq);
+int pattern(dna_seq_t* dna, char* out_rna, pitem_seq_t* out_pattern_seq);
 
 #endif  /* PATTERN_H */
