@@ -56,31 +56,40 @@ dna_seq_t* asnat(int n) {
   return dna_seq;
 }
 
-void replace(titem_seq_t* template_seq, env_t* env, dna_seq_t* out_dna_seq) {
-  titem_t* titem_ptr = template_seq->start;
+/* replace() implementation below is different from the one described in the */
+/* doc: it just generates a new DNA sequence, which caller must then prepend */
+/* to the existing DNA.                                                      */
+dna_seq_t* replace(titem_seq_t* template_seq, env_t* env) {
   dna_seq_t* asnat_dna_seq;
   dna_seq_t* protect_dna_seq;
+  dna_seq_t* env_seq;
+  dna_seq_t* out = init_dna_seq();
+  titem_t* titem_ptr = template_seq->start;
 
-  while (titem_ptr - template_seq->start < template_seq->size) {
+  while (titem_ptr != template_seq->end) {
     switch (titem_ptr->type) {
       case TITEM_BASE:
-        append_to_dna_seq(out_dna_seq, titem_ptr->base);
+        append_to_dna_seq(out, titem_ptr->base);
         break;
       case TITEM_REF:
-        protect_dna_seq = protect(titem_ptr->prot_level, (*env)[titem_ptr->ref_num]);
+        env_seq = (*env)[titem_ptr->ref_num];
+        protect_dna_seq = protect(titem_ptr->prot_level, env_seq);
         for (char* ptr = protect_dna_seq->start; ptr != protect_dna_seq->end; ptr++) {
-          append_to_dna_seq(out_dna_seq, *ptr);
+          append_to_dna_seq(out, *ptr);
         }
         free_dna_seq(protect_dna_seq);
         break;
       case TITEM_LEN:
-        asnat_dna_seq = asnat(titem_ptr->len);
+        env_seq = (*env)[titem_ptr->len];
+        asnat_dna_seq = asnat(env_seq->end - env_seq->start);
         for (char* ptr = asnat_dna_seq->start; ptr != asnat_dna_seq->end; ptr++) {
-          append_to_dna_seq(out_dna_seq, *ptr);
+          append_to_dna_seq(out, *ptr);
         }
         free_dna_seq(asnat_dna_seq);
         break;
     }
     titem_ptr++;
   }
+
+  return out;
 }

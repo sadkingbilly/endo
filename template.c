@@ -2,18 +2,22 @@
 #include "template.h"
 
 void emit_titem(titem_seq_t* out_seq, titem_t item) {
-  assert(out_seq->size);
-  assert((out_seq->next - out_seq->start) < out_seq->size);
-  *(out_seq->next) = item;
-  out_seq->next++;
+  *(out_seq->end) = item;
+  out_seq->end++;
+  assert((out_seq->end - out_seq->start) < out_seq->size);
 }
 
 titem_seq_t* init_template_seq() {
   titem_seq_t* seq = (titem_seq_t*) malloc(sizeof(titem_seq_t));
   seq->start = (titem_t*) malloc(TEMPLATE_SIZE * sizeof(titem_t));
-  seq->next = seq->start;
+  seq->end = seq->start;
   seq->size = TEMPLATE_SIZE;
   return seq;
+}
+
+void free_template_seq(titem_seq_t* seq) {
+  free(seq->start);
+  free(seq);
 }
 
 /* Reads from and advances dna->cur. */

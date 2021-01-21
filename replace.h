@@ -9,6 +9,6 @@ typedef dna_seq_t* env_t[1024];
 
 dna_seq_t* protect(int prot_level, dna_seq_t* dna_seq);
 dna_seq_t* asnat(int n);
-void replace(titem_seq_t* template_seq, env_t* env, dna_seq_t* out_dna_seq);
+dna_seq_t* replace(titem_seq_t* template_seq, env_t* env);
 
 #endif  /* REPLACE_H */
