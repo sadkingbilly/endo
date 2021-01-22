@@ -20,7 +20,7 @@ void free_template_seq(titem_seq_t* seq) {
   free(seq);
 }
 
-/* Reads from and advances dna->cur. */
+/* Reads from and advances dna->cur. Does not alter dna in other ways. */
 titem_seq_t* template(dna_seq_t* dna, rna_t* rna) {
   titem_seq_t* out = init_template_seq();
 

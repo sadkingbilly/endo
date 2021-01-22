@@ -106,3 +106,12 @@ int dna_seq_equal(dna_seq_t* one, dna_seq_t* two) {
 
   return 1;
 }
+
+int dna_seq_match(char* one, char* two, size_t size) {
+  for (int i = 0; i < size; i++) {
+    if (one[i] != two[i]) {
+      return 0;
+    }
+  }
+  return 1;
+}

@@ -136,7 +136,11 @@ void nat_test() {
   assert(nat(dna, NULL) == 5);
   free_dna_seq(dna);
 }
-  
+ 
+void dna_seq_match_test() {
+  assert(dna_seq_match("ICFP", "ICFC", 3) == 1);
+  assert(dna_seq_match("ICFP", "ICCC", 3) == 0);
+}
 
 int main(int unused_argc, char** unused_argv) {
   init_dna_seq_test();

@@ -30,5 +30,6 @@ int nat(dna_seq_t* dna, rna_t* rna);
 void append_to_dna_seq(dna_seq_t* dna_seq, char c);
 char get_from_dna_seq(dna_seq_t* dna_seq, size_t pos);
 int dna_seq_equal(dna_seq_t* one, dna_seq_t* two);
+int dna_seq_match(char* one, char* two, size_t size);
 
 #endif  /* DNA_SEQ_H */
