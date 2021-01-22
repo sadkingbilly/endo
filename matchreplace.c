@@ -1,12 +1,18 @@
 #include "common.h"
 #include "matchreplace.h"
 
+#define C_SIZE (1024)
+
 void matchreplace(dna_seq_t* dna, pitem_seq_t* patt, titem_seq_t* tmpl, env_t* out_env) {
   size_t i = 0;
-  int c[1024];
-  int* c_end = c;
   dna_seq_t* match_dna;
+  dna_seq_t** env_start = (dna_seq_t**) out_env;
+  dna_seq_t** env_end = env_start;
   int dna_size, match_size, match_pos, min_n, max_n, matched;
+  /* Since c is used as stack, elements are stored in it in reverse order, */
+  /* compared to the specification.                                        */
+  int c[C_SIZE];
+  int* c_end = c;
 
   /* We should not alter dna->cur within this loop, as it defines the relevant */
   /* input sequence, and that input sequence is not altered within the loop.   */
@@ -54,10 +60,24 @@ void matchreplace(dna_seq_t* dna, pitem_seq_t* patt, titem_seq_t* tmpl, env_t* o
         }
         break;
       case PITEM_OPEN_GROUP:
-        /* TODO: implement. */
+        /* Push the value to c stack. */
+        *c_end = i;
+        c_end++;
+        assert(c_end - c < C_SIZE);
         break;
       case PITEM_CLOSE_GROUP:
-        /* TODO: implement. */
+        *env_end = init_dna_seq();
+        /* We can assume that i is within bounds here, as we check for overruns */
+        /* in the other branches.                                               */
+        for (int k = *c_end; k < i; k++) {
+          append_to_dna_seq(*env_end, *(dna->cur + k));
+        }
+        /* Advance env_end pointer to the next empty slot. */
+        env_end++;
+        assert(env_end - env_start < ENV_SIZE);
+        /* Pop the value from c stack. */  
+        c_end--;
+        assert(c_end >= c);
         break;
     }
   }

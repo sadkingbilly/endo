@@ -22,6 +22,7 @@ typedef struct {
 
 dna_seq_t* init_dna_seq();
 dna_seq_t* init_dna_seq_with_size(size_t size);
+dna_seq_t* init_dna_seq_from_ptr(char* str, size_t size);
 dna_seq_t* init_dna_seq_from_str(char* str);
 dna_seq_t* clone_dna_seq(dna_seq_t* dna_seq);
 void free_dna_seq(dna_seq_t* dna_seq);

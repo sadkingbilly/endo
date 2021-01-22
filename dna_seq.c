@@ -18,11 +18,15 @@ dna_seq_t* init_dna_seq() {
   return init_dna_seq_with_size(DNA_SEQ_INIT_SIZE);
 }
 
-dna_seq_t* init_dna_seq_from_str(char* str) {
-  dna_seq_t* dna_seq = init_dna_seq_with_size(strlen(str) + 1);
-  memcpy(dna_seq->start, str, strlen(str));
-  dna_seq->end = dna_seq->start + strlen(str);
+dna_seq_t* init_dna_seq_from_ptr(char* str, size_t size) {
+  dna_seq_t* dna_seq = init_dna_seq_with_size(size);
+  memcpy(dna_seq->start, str, size);
+  dna_seq->end = dna_seq->start + size;
   return dna_seq;
+}
+
+dna_seq_t* init_dna_seq_from_str(char* str) {
+  return init_dna_seq_from_ptr(str, strlen(str));
 }
 
 dna_seq_t* clone_dna_seq(dna_seq_t *dna_seq) {

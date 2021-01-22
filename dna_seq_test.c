@@ -15,17 +15,30 @@ void init_dna_seq_with_size_test() {
   free_dna_seq(dna_seq);
 }
 
+void init_dna_seq_from_ptr_test() {
+  dna_seq_t* dna_seq = init_dna_seq_from_ptr("ICFP", 2);
+
+  dna_seq_t* expected = init_dna_seq_with_size(2);
+  append_to_dna_seq(expected, 'I');
+  append_to_dna_seq(expected, 'C');
+  expected->size = dna_seq->size;
+  assert(dna_seq_equal(dna_seq, expected));
+  free_dna_seq(dna_seq);
+  free_dna_seq(expected);
+}
+
 void init_dna_seq_from_str_test() {
   dna_seq_t* dna_seq = init_dna_seq_from_str("ICFP");
 
-  dna_seq_t* expected = init_dna_seq_with_size(5);
-  append_to_dna_seq(dna_seq, 'I');
-  append_to_dna_seq(dna_seq, 'C');
-  append_to_dna_seq(dna_seq, 'F');
-  append_to_dna_seq(dna_seq, 'P');
-
+  dna_seq_t* expected = init_dna_seq_with_size(4);
+  append_to_dna_seq(expected, 'I');
+  append_to_dna_seq(expected, 'C');
+  append_to_dna_seq(expected, 'F');
+  append_to_dna_seq(expected, 'P');
+  expected->size = dna_seq->size;
   assert(dna_seq_equal(dna_seq, expected));
   free_dna_seq(dna_seq);
+  free_dna_seq(expected);
 }
 
 void dna_seq_append_test() {
@@ -144,6 +157,8 @@ void dna_seq_match_test() {
 
 int main(int unused_argc, char** unused_argv) {
   init_dna_seq_test();
+  init_dna_seq_from_ptr_test();
+  init_dna_seq_from_str_test();
   init_dna_seq_with_size_test();
   dna_seq_append_test();
   get_from_dna_seq_test();
