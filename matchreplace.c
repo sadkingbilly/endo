@@ -5,7 +5,7 @@
 
 void free_env(env_t* env_ptr, size_t count) {
   for (int i = 0; i < count; i++) {
-    free((*env_ptr)[i]);
+    free_dna_seq((*env_ptr)[i]);
   }
 }
 
@@ -96,14 +96,15 @@ dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl)
         break;
     }
   }
-  free(out_dna);
   /* Construct a new DNA by concatenating the sequence returned by replace() */
   /* and the remaining "tail" of current DNA from i to the end.              */
-  assert(in_dna->cur + i < in_dna->end);
+  free_dna_seq(out_dna);
+  assert(in_dna->cur + i <= in_dna->end);
   in_dna->cur += i;
   out_dna = replace(tmpl, &env);
   while (in_dna->cur != in_dna->end) {
     append_to_dna_seq(out_dna, *in_dna->cur);
+    in_dna->cur++;
   }
   free_env(&env, env_count);
   return out_dna;

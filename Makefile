@@ -1,6 +1,6 @@
 CC := gcc
 CFLAGS := -fsanitize=address -g
-DEPS := replace.o template.o dna_seq.o rna.o
+DEPS := matchreplace.o pattern.o replace.o template.o dna_seq.o rna.o
 %.o : %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
