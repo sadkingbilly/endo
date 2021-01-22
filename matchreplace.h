@@ -6,6 +6,6 @@
 #include "replace.h"
 #include "template.h"
 
-void matchreplace(dna_seq_t* dna, pitem_seq_t* patt, titem_seq_t* tmpl, env_t* env);
+dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl);
 
 #endif  /* MATCHREPLACE_H */
