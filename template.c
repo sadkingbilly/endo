@@ -32,7 +32,6 @@ titem_seq_t* template(dna_seq_t* dna, rna_t* rna) {
         selector[2] = consume_base(dna);
       }
     }
-    printf("[template] selector=%s\n", selector);
 
     if (strcmp(selector, "C") == 0) {
       emit_titem(out, (titem_t) {.type = TITEM_BASE, .base = 'I'});

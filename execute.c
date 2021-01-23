@@ -33,5 +33,8 @@ void execute(char* filename) {
     free(t);
     printf("[%s:%d] Completed iteration %d.\n", __FILE__, __LINE__, iter);
     iter++;
+    if (iter == 1000) {
+      break;
+    }
   }
 }

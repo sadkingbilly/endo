@@ -19,7 +19,8 @@ dna_seq_t* init_dna_seq() {
 }
 
 dna_seq_t* init_dna_seq_from_ptr(char* str, size_t size) {
-  dna_seq_t* dna_seq = init_dna_seq_with_size(size);
+  /* Extra one byte, so that end points within the buffer. */
+  dna_seq_t* dna_seq = init_dna_seq_with_size(size + 1);
   memcpy(dna_seq->start, str, size);
   dna_seq->end = dna_seq->start + size;
   return dna_seq;

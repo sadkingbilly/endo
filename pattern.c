@@ -66,7 +66,6 @@ pitem_seq_t* pattern(dna_seq_t* dna, rna_t* rna) {
         selector[2] = consume_base(dna);
       }
     }
-    printf("[pattern] selector=%s\n", selector);
 
     if (strcmp(selector, "C") == 0) {
       emit_pitem(out, (pitem_t) {.type = PITEM_BASE, .base = 'I'});

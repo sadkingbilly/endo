@@ -17,6 +17,7 @@ void print_dna_seq(char* ptr, size_t size) {
 dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl) {
   size_t i = 0;
   dna_seq_t* match_dna;
+  dna_seq_t* replace_dna;
   int dna_size, match_size, match_pos, min_n, max_n, matched;
   /* Since c is used as stack, elements are stored in it in reverse order, */
   /* compared to the specification.                                        */
@@ -26,9 +27,6 @@ dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl)
   /* Elements added to the environment need to be freed on return. */
   env_t env;
   size_t env_count = 0;
-
-  printf("[matchreplace#0] pattern_size=%d.\n", patt->end - patt->start);
-  printf("[matchreplace#1] in_dna_cur=%d in_dna_end=%d.\n", in_dna->cur - in_dna->start, in_dna->end - in_dna->start);
 
   /* We should not alter dna->cur within this loop, as it defines the relevant    */
   /* input sequence, and that input sequence is not altered within the loop. If   */
@@ -56,9 +54,6 @@ dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl)
       case PITEM_DNA_SEQ:
         match_dna = pitem->dna_seq;
         match_size = match_dna->end - match_dna->start;
-        printf("[matchreplace#dna_seq] match_size=%d.\n", match_size);
-        printf("[matchreplace#dna_seq] match_dna=");
-        print_dna_seq(match_dna->start, match_size);
         /* We need to verify whether match_dna is a postfix of dna[i..n], */
         /* а sequence of length (n - i), for all possible n >= i.         */
         min_n = i + match_size;
@@ -69,14 +64,12 @@ dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl)
           return out_dna;
         }
         matched = 0;
-        printf("[matchreplace#dna_seq] min_n=%d max_n=%d.\n", min_n, max_n);
         for (int n = min_n; n <= max_n; n++) {
           /* match_pos is the position relative to dna->cur where the */
           /* match_dna would start, if it is included in dna[i..n] as */
           /* postfix.                                                 */
           match_pos = n - match_size;
           if (dna_seq_match(in_dna->cur + match_pos, match_dna->start, match_size)) {
-            printf("[matchreplace#dna_seq] matched at match_pos=%d.\n", match_pos);
             i = n;
             matched = 1;
             break;
@@ -94,35 +87,36 @@ dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl)
         assert(c_end - c < C_SIZE);
         break;
       case PITEM_CLOSE_GROUP:
-        env[env_count] = init_dna_seq();
-        /* We can assume that i is within bounds here, as we check for overruns */
-        /* in the other branches.                                               */
-        for (int k = *c_end; k < i; k++) {
-          append_to_dna_seq(env[env_count], *(in_dna->cur + k));
-        }
-        /* Advance env_count to the next empty slot. */
-        env_count++;
-        assert(env_count < ENV_SIZE);
         /* Pop the value from c stack. */  
         c_end--;
         assert(c_end >= c);
+        /* We can assume that i is within bounds here, as we check for overruns */
+        /* in the other branches.                                               */
+        assert(*c_end <= i);
+        /* Emit in_dna[c_end..i] to env. */
+        env[env_count] = init_dna_seq_from_ptr(in_dna->cur + *c_end, i - *c_end);
+        /* Advance env_count to the next empty slot. */
+        env_count++;
+        assert(env_count < ENV_SIZE);
         break;
     }
   }
   /* Construct a new DNA by concatenating the sequence returned by replace() */
   /* and the remaining "tail" of current DNA from i to the end.              */
-  free_dna_seq(out_dna);
-  printf("[matchreplace] no early return, i=%d\n", i);
   assert(in_dna->cur + i <= in_dna->end);
   in_dna->cur += i;
-  printf("[matchreplace#2] in_dna_cur=%d in_dna_end=%d.\n", in_dna->cur - in_dna->start, in_dna->end - in_dna->start);
-  out_dna = replace(tmpl, &env);
-  printf("[matchreplace#3] in_dna_cur=%d in_dna_end=%d.\n", in_dna->cur - in_dna->start, in_dna->end - in_dna->start);
-  while (in_dna->cur != in_dna->end) {
-    append_to_dna_seq(out_dna, *in_dna->cur);
-    in_dna->cur++;
-  }
-  printf("[matchreplace#4] in_dna_cur=%d in_dna_end=%d.\n", in_dna->cur - in_dna->start, in_dna->end - in_dna->start);
+  int remaining_dna_size = in_dna->end - in_dna->cur;
+
+  replace_dna = replace(tmpl, &env);
+  int replace_dna_size = replace_dna->end - replace_dna->start;
+
+  free_dna_seq(out_dna);
+  out_dna = init_dna_seq_with_size(replace_dna->size + remaining_dna_size);
+  memcpy(out_dna->start, replace_dna->start, replace_dna_size);
+  memcpy(out_dna->start + replace_dna_size, in_dna->cur, remaining_dna_size);
+  out_dna->end = out_dna->start + replace_dna_size + remaining_dna_size;
+
+  free_dna_seq(replace_dna);
   free_env(&env, env_count);
   return out_dna;
 }
