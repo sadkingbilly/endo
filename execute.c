@@ -31,8 +31,8 @@ void execute(char* filename) {
     dna_seq_t* new_dna = matchreplace(dna, p, t);
     free_dna_seq(dna);
     dna = new_dna;
-    free(p);
-    free(t);
+    free_pattern_seq(p);
+    free_template_seq(t);
     iter++;
     if (iter % 10000 == 0) {
       finish(&rna);
