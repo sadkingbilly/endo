@@ -54,6 +54,7 @@ dna_seq_t* consts(dna_seq_t* dna) {
 
 /* Reads from and advances dna->cur. Does not alter dna in other ways. */
 pitem_seq_t* pattern(dna_seq_t* dna, rna_t* rna) {
+  assert(dna->cur == dna->start);
   int lvl = 0;
   pitem_seq_t* out = init_pattern_seq();
 
@@ -65,6 +66,7 @@ pitem_seq_t* pattern(dna_seq_t* dna, rna_t* rna) {
         selector[2] = consume_base(dna);
       }
     }
+    printf("[pattern] selector=%s\n", selector);
 
     if (strcmp(selector, "C") == 0) {
       emit_pitem(out, (pitem_t) {.type = PITEM_BASE, .base = 'I'});
@@ -116,7 +118,8 @@ pitem_seq_t* pattern(dna_seq_t* dna, rna_t* rna) {
       dna->cur += rna_size;
       continue;
     }
-
+    
+    printf("Terminating on selector %s\n", selector);
     /* Did not match any selectors, terminating. */
     break;
   }

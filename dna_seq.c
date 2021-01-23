@@ -76,9 +76,12 @@ void append_to_dna_seq(dna_seq_t* dna_seq, char c) {
   *(dna_seq->end) = c;
   dna_seq->end++;
   if (dna_seq->end - dna_seq->start == dna_seq->size) {
-    dna_seq->start = realloc(dna_seq->start, dna_seq->size * DNA_SEQ_SIZE_FACTOR);
+    size_t cur_offset = dna_seq->cur - dna_seq->start;
+    size_t new_size = dna_seq->size * DNA_SEQ_SIZE_FACTOR;
+    dna_seq->start = realloc(dna_seq->start, new_size);
+    dna_seq->cur = dna_seq->start + cur_offset;
     dna_seq->end = dna_seq->start + dna_seq->size;
-    dna_seq->size *= DNA_SEQ_SIZE_FACTOR;
+    dna_seq->size = new_size;
     dna_seq_realloc_count++;
   }
 }

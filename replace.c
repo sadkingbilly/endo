@@ -66,6 +66,7 @@ dna_seq_t* replace(titem_seq_t* template_seq, env_t* env) {
   dna_seq_t* out = init_dna_seq();
   titem_t* titem_ptr = template_seq->start;
 
+  printf("[replace] template_size=%d\n", template_seq->end - template_seq->start);
   while (titem_ptr != template_seq->end) {
     switch (titem_ptr->type) {
       case TITEM_BASE:

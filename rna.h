@@ -1,7 +1,7 @@
 #ifndef RNA_H
 #define RNA_H
 
-#define RNA_SIZE (1024)
+#define RNA_SIZE (500000)
 
 typedef struct {
   /* End marker, pointing to the next available slot. */
