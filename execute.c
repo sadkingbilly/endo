@@ -3,6 +3,7 @@
 #include "pattern.h"
 #include "template.h"
 #include "matchreplace.h"
+#include <time.h>
 
 void execute(char* filename) {
   FILE* fh = fopen(filename, "r");
@@ -22,19 +23,21 @@ void execute(char* filename) {
   init_rna(&rna);
 
   int iter = 0;
+  time_t start_seconds = time(NULL);
+  time_t elapsed_seconds;
   while(1) {
     pitem_seq_t* p = pattern(dna, &rna);
     titem_seq_t* t = template(dna, &rna);
     dna_seq_t* new_dna = matchreplace(dna, p, t);
-    printf("matchreplace generated new sequence with size=%d\n", new_dna->end - new_dna->start);
     free_dna_seq(dna);
     dna = new_dna;
     free(p);
     free(t);
-    printf("[%s:%d] Completed iteration %d.\n", __FILE__, __LINE__, iter);
     iter++;
-    if (iter == 1000) {
-      break;
+    if (iter % 10000 == 0) {
+      finish(&rna);
+      elapsed_seconds = time(NULL) - start_seconds;
+      printf("Completed %d iterations in %d seconds.\n", iter, elapsed_seconds);
     }
   }
 }

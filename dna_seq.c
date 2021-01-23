@@ -73,7 +73,7 @@ int nat(dna_seq_t* dna, rna_t* rna) {
   return -1;
 }
 
-void append_to_dna_seq(dna_seq_t* dna_seq, char c) {
+void x_append_to_dna_seq(dna_seq_t* dna_seq, char c) {
   *(dna_seq->end) = c;
   dna_seq->end++;
   if (dna_seq->end - dna_seq->start == dna_seq->size) {
@@ -85,6 +85,27 @@ void append_to_dna_seq(dna_seq_t* dna_seq, char c) {
     dna_seq->size = new_size;
     dna_seq_realloc_count++;
   }
+}
+
+void append_to_dna_seq_from_ptr(dna_seq_t* dna_seq, char* src, size_t size) {
+  int data_size = dna_seq->end - dna_seq->start;
+  if (data_size + size >= dna_seq->size) {
+    /* Need to reallocate. */
+    size_t cur_offset = dna_seq->cur - dna_seq->start;
+    size_t end_offset = dna_seq->end - dna_seq->start;
+    size_t new_size = dna_seq->size * DNA_SEQ_SIZE_FACTOR + size + 1;
+    dna_seq->start = realloc(dna_seq->start, new_size);
+    dna_seq->cur = dna_seq->start + cur_offset;
+    dna_seq->end = dna_seq->start + end_offset;
+    dna_seq->size = new_size;
+    dna_seq_realloc_count++;
+  }
+  memcpy(dna_seq->end, src, size);
+  dna_seq->end += size;
+}
+
+void append_to_dna_seq(dna_seq_t* dna_seq, char c) {
+  append_to_dna_seq_from_ptr(dna_seq, &c, 1);
 }
 
 char get_from_dna_seq(dna_seq_t* dna_seq, size_t pos) {

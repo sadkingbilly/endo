@@ -60,6 +60,21 @@ void dna_seq_append_test() {
   free_dna_seq(dna_seq);
 }
 
+void dna_seq_append_from_ptr_test() {
+  dna_seq_t* dna_seq = init_dna_seq();
+
+  /* Append enough to trigger realloc. */
+  char str[] = "ICFPICFPICFPIFCP";
+  for (int i = 0; i < DNA_SEQ_INIT_SIZE / strlen(str) + 2; i++) {
+    append_to_dna_seq_from_ptr(dna_seq, str, strlen(str));
+  }
+  assert(dna_seq->end - dna_seq->start == DNA_SEQ_INIT_SIZE + 2 * strlen(str));
+  *dna_seq->end = '\0';
+  dna_seq->cur = dna_seq->end - strlen(str);
+  assert(strcmp(dna_seq->cur, str) == 0);
+  free_dna_seq(dna_seq);
+}
+
 void get_from_dna_seq_test() {
   dna_seq_t* dna_seq = init_dna_seq_from_str("ICFP");
   assert(get_from_dna_seq(dna_seq, 0) == 'I');
@@ -77,7 +92,7 @@ void dna_seq_realloc_test() {
     append_to_dna_seq(dna_seq, 'I');
   }
   /* Overflowing the original size should trigger realloc. */
-  assert(dna_seq->size == DNA_SEQ_SIZE_FACTOR * DNA_SEQ_INIT_SIZE);
+  assert(dna_seq->size == DNA_SEQ_SIZE_FACTOR * DNA_SEQ_INIT_SIZE + 2);
   assert(dna_seq->end - dna_seq->start == DNA_SEQ_INIT_SIZE + 4);
 
   free_dna_seq(dna_seq);
@@ -161,6 +176,7 @@ int main(int unused_argc, char** unused_argv) {
   init_dna_seq_from_str_test();
   init_dna_seq_with_size_test();
   dna_seq_append_test();
+  dna_seq_append_from_ptr_test();
   get_from_dna_seq_test();
   dna_seq_realloc_test();
   clone_dna_seq_test();

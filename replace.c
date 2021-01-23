@@ -66,7 +66,6 @@ dna_seq_t* replace(titem_seq_t* template_seq, env_t* env) {
   dna_seq_t* out = init_dna_seq();
   titem_t* titem_ptr = template_seq->start;
 
-  printf("[replace] template_size=%d\n", template_seq->end - template_seq->start);
   while (titem_ptr != template_seq->end) {
     switch (titem_ptr->type) {
       case TITEM_BASE:
@@ -75,17 +74,15 @@ dna_seq_t* replace(titem_seq_t* template_seq, env_t* env) {
       case TITEM_REF:
         env_seq = (*env)[titem_ptr->ref_num];
         protect_dna_seq = protect(titem_ptr->prot_level, env_seq);
-        for (char* ptr = protect_dna_seq->start; ptr != protect_dna_seq->end; ptr++) {
-          append_to_dna_seq(out, *ptr);
-        }
+        int protect_dna_seq_size = protect_dna_seq->end - protect_dna_seq->start;
+        append_to_dna_seq_from_ptr(out, protect_dna_seq->start, protect_dna_seq_size);
         free_dna_seq(protect_dna_seq);
         break;
       case TITEM_LEN:
         env_seq = (*env)[titem_ptr->len];
         asnat_dna_seq = asnat(env_seq->end - env_seq->start);
-        for (char* ptr = asnat_dna_seq->start; ptr != asnat_dna_seq->end; ptr++) {
-          append_to_dna_seq(out, *ptr);
-        }
+        int asnat_dna_seq_size = asnat_dna_seq->end - asnat_dna_seq->start;
+        append_to_dna_seq_from_ptr(out, asnat_dna_seq->start, asnat_dna_seq_size);
         free_dna_seq(asnat_dna_seq);
         break;
     }

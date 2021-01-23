@@ -4,7 +4,7 @@
 #include "dna_seq.h"
 #include "rna.h"
 
-#define TEMPLATE_SIZE (1024*1024)
+#define TEMPLATE_SIZE (16 * 1024)
 
 typedef enum {
   TITEM_BASE,
