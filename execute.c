@@ -37,6 +37,7 @@ void execute(char* filename) {
     free_template_seq(t);
     iter++;
     if (iter % 10000 == 0) {
+      print_max_protect_level();
       finish(&rna);
       elapsed_seconds = time(NULL) - start_seconds;
       printf("Completed %d iterations in %d seconds.\n", iter, elapsed_seconds);

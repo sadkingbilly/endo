@@ -27,6 +27,45 @@ void protect_test() {
   free_dna_seq(orig);
 }
 
+#define PROTECT_FAST_TEST_OUT_BUF_SIZE (1024)
+void protect_fast_test() {
+  char out_buf[PROTECT_FAST_TEST_OUT_BUF_SIZE];
+  dna_seq_t* orig = init_dna_seq_from_str("ICFP");
+  size_t chars_out;
+  char* expected;
+
+  expected = "ICFP";
+  chars_out = protect_fast(0, orig, out_buf, PROTECT_FAST_TEST_OUT_BUF_SIZE);
+  assert(chars_out == strlen(expected));
+  out_buf[chars_out] = '\0';
+  assert(strcmp(out_buf, expected) == 0);
+
+  expected = "CFPIC";
+  chars_out = protect_fast(1, orig, out_buf, PROTECT_FAST_TEST_OUT_BUF_SIZE);
+  assert(chars_out == strlen(expected));
+  out_buf[chars_out] = '\0';
+  assert(strcmp(out_buf, expected) == 0);
+
+  expected = "FPICCF";
+  chars_out = protect_fast(2, orig, out_buf, PROTECT_FAST_TEST_OUT_BUF_SIZE);
+  assert(chars_out == strlen(expected));
+  out_buf[chars_out] = '\0';
+  assert(strcmp(out_buf, expected) == 0);
+
+  free_dna_seq(orig);
+
+  /* Complex test comparing two different implementations. */
+  orig = init_dna_seq_from_str("FPICCFCFPICICFP");
+  chars_out = protect_fast(5, orig, out_buf, PROTECT_FAST_TEST_OUT_BUF_SIZE);
+  out_buf[chars_out] = '\0';
+  dna_seq_t* protect_out = protect(5, orig);
+  *protect_out->end = '\0';
+  assert(strcmp(out_buf, protect_out->start) == 0);
+
+  free_dna_seq(orig);
+  free_dna_seq(protect_out);
+}
+
 void asnat_test() {
   dna_seq_t* seq = asnat(0);
   *seq->end = '\0';
@@ -66,7 +105,6 @@ void replace_test() {
   dna_seq_t* expected = init_dna_seq_from_str("IFPICCFICP");
   expected->size = replace_seq->size;
   *replace_seq->end = '\0';
-  printf("replace_seq=%s\n", replace_seq->start);
   assert(dna_seq_equal(expected, replace_seq));
 
   free_dna_seq(expected);
@@ -80,6 +118,7 @@ int main(int unused_argc, char** unused_argv) {
   init_asnat_table();
 
   protect_test();
+  protect_fast_test();
   asnat_test();
   replace_test();
 }

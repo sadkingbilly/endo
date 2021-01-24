@@ -1,7 +1,7 @@
 CC := gcc
-CFLAGS := -g -pg
+#CFLAGS := -g -pg
 #CFLAGS := -fsanitize=address -g -pg
-#CFLAGS := -O2
+CFLAGS := -O2
 DEPS := execute.o matchreplace.o pattern.o replace.o template.o dna_seq.o rna.o
 
 %.o : %.c
