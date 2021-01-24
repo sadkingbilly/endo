@@ -13,7 +13,8 @@ void execute(char* filename) {
   long dna_size = ftell(fh);
   rewind(fh);
   char* dna_buf = (char *) malloc(dna_size);
-  assert(fread(dna_buf, 1, dna_size, fh) == dna_size);
+  size_t read_size = fread(dna_buf, 1, dna_size, fh);
+  assert(read_size == dna_size);
   fclose(fh);
 
   dna_seq_t* dna = init_dna_seq_from_ptr(dna_buf, dna_size);
@@ -37,8 +38,6 @@ void execute(char* filename) {
     free_template_seq(t);
     iter++;
     if (iter % 10000 == 0) {
-      print_max_protect_level();
-      finish(&rna);
       elapsed_seconds = time(NULL) - start_seconds;
       printf("Completed %d iterations in %d seconds.\n", iter, elapsed_seconds);
     }

@@ -68,6 +68,8 @@ char* protect_special_chars[PROTECT_SPECIAL_CHARS_SIZE] = {
 
 /* Returns how many bases were actually written into out_buf. */
 /* Does not allocate memory.                                  */
+/* This actually turned out to be slower than protect(), so   */
+/* currently not in use.                                      */
 size_t protect_fast(int prot_level, dna_seq_t* dna_seq, char* out_buf, size_t out_buf_size) {
   /* Copy input DNA into out_buf. */
   size_t dna_seq_size = dna_seq->end - dna_seq->start;
@@ -188,10 +190,10 @@ dna_seq_t* replace(titem_seq_t* template_seq, env_t* env) {
         break;
       case TITEM_REF:
         env_seq = (*env)[titem_ptr->ref_num];
-        int protect_dna_seq_size = protect_fast(titem_ptr->prot_level, env_seq,
-                                                protect_fast_out_buf,
-                                                PROTECT_FAST_OUT_BUF_SIZE);
-        append_to_dna_seq_from_ptr(out, protect_fast_out_buf, protect_dna_seq_size);
+        protect_dna_seq = protect(titem_ptr->prot_level, env_seq);
+        append_to_dna_seq_from_ptr(out, protect_dna_seq->start,
+                                   protect_dna_seq->end - protect_dna_seq->start);
+        free_dna_seq(protect_dna_seq);
         break;
       case TITEM_LEN:
         env_seq = (*env)[titem_ptr->len];
