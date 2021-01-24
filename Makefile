@@ -1,7 +1,4 @@
 CC := gcc
-#CFLAGS := -g -pg
-CFLAGS := -fsanitize=address -g
-#CFLAGS := -O2
 DEPS := execute.o matchreplace.o pattern.o replace.o template.o dna_seq.o rna.o
 
 %.o : %.c
@@ -24,11 +21,15 @@ run_opt: CFLAGS = -O2
 run_opt: $(DEPS) run.o
 	$(CC) $(CFLAGS) $? -o $@
 
+run_tcmalloc: CFLAGS = -O2 -ltcmalloc_minimal
+run_tcmalloc: $(DEPS) run.o
+	$(CC) $(CFLAGS) $? -o $@
+
 run_prof: CFLAGS = -g -pg
 run_prof: $(DEPS) run.o
 	$(CC) $(CFLAGS) $? -o $@
 
 clean:
-	rm -f *.o *_test run
+	rm -f *.o *_test run_*
 
 .PHONY: tests clean
