@@ -23,6 +23,22 @@ void pattern_test() {
   assert(out_pattern_seq->end - out_pattern_seq->start == 4);
   free_pattern_seq(out_pattern_seq);
   free_dna_seq(dna);
+
+  /* Test which exercises PITEM_DNA_SEQ, which allocates memory. */
+  /* IF   - trigger for PITEM_DNA_SEQ.                           */
+  /* F    - dummy base, consumed after IF.                       */
+  /* PPPP - consumed by consts().                                */
+  /* IIC  - II acts as a termination marker for consts(), which  */
+  /*        is examined (but not consumed!) by it. IIC then acts */
+  /*        as a termination marker for pattern().               */
+  dna = init_dna_seq_from_str("IFFPPPPIIC");
+  out_pattern_seq = pattern(dna, NULL);
+  pitem_arr = out_pattern_seq->start;
+  assert(pitem_arr[0].type == PITEM_DNA_SEQ);
+  *pitem_arr[0].dna_seq->end = '\0';
+  assert(strcmp("FFFF", pitem_arr[0].dna_seq->start) == 0);
+  free_pattern_seq(out_pattern_seq);
+  free_dna_seq(dna);
 }
 
 int main(int unused_argc, char** unused_argv) {

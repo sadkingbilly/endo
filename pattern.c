@@ -16,6 +16,11 @@ pitem_seq_t* init_pattern_seq() {
 }
 
 void free_pattern_seq(pitem_seq_t* pitem_seq) {
+  for(pitem_t* ptr = pitem_seq->start; ptr != pitem_seq->end; ptr++) {
+    if (ptr->type == PITEM_DNA_SEQ) {
+      free_dna_seq(ptr->dna_seq);
+    }
+  }
   free(pitem_seq->start);
   free(pitem_seq);
 }
