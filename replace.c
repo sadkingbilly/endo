@@ -4,6 +4,14 @@
 
 #define PROTECT_TMP_BUF_SIZE (1024)
 
+dna_seq_t* asnat_table[ASNAT_TABLE_SIZE];
+
+void init_asnat_table() {
+  for (int i = 0; i < ASNAT_TABLE_SIZE; i++) {
+    asnat_table[i] = NULL;
+  }
+}
+
 /* The effect of protect() is to quote input sequence prot_level times. */
 dna_seq_t* protect(int prot_level, dna_seq_t* dna_seq) {
   dna_seq_t* out = clone_dna_seq(dna_seq);
@@ -40,20 +48,29 @@ dna_seq_t* protect(int prot_level, dna_seq_t* dna_seq) {
   return out;
 }
 
-/* Potential optimization: may be precalculated. */
+/* Sequences are cached, caller should not attempt to free them. */
+/* Not thread-safe.                                              */
 dna_seq_t* asnat(int n) {
-  assert(n >= 0);
-  dna_seq_t* dna_seq = init_dna_seq();
+  if (!(n >= 0 && n < ASNAT_TABLE_SIZE)) {
+    printf("failure n=%d\n", n);
+    assert(0);
+  }
+  if (asnat_table[n] != NULL) {
+    return asnat_table[n];
+  }
+
+  int n_orig = n;
+  asnat_table[n_orig] = init_dna_seq();
   while (n) {
     if (n % 2) {
-      append_to_dna_seq(dna_seq, 'C');
+      append_to_dna_seq(asnat_table[n_orig], 'C');
     } else {
-      append_to_dna_seq(dna_seq, 'I');
+      append_to_dna_seq(asnat_table[n_orig], 'I');
     }
     n = n / 2;
   }
-  append_to_dna_seq(dna_seq, 'P');
-  return dna_seq;
+  append_to_dna_seq(asnat_table[n_orig], 'P');
+  return asnat_table[n_orig];
 }
 
 /* replace() implementation below is different from the one described in the */
@@ -80,10 +97,10 @@ dna_seq_t* replace(titem_seq_t* template_seq, env_t* env) {
         break;
       case TITEM_LEN:
         env_seq = (*env)[titem_ptr->len];
+        /* No need to free the sequence returned by asnat(). */
         asnat_dna_seq = asnat(env_seq->end - env_seq->start);
         int asnat_dna_seq_size = asnat_dna_seq->end - asnat_dna_seq->start;
         append_to_dna_seq_from_ptr(out, asnat_dna_seq->start, asnat_dna_seq_size);
-        free_dna_seq(asnat_dna_seq);
         break;
     }
     titem_ptr++;

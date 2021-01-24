@@ -31,27 +31,22 @@ void asnat_test() {
   dna_seq_t* seq = asnat(0);
   *seq->end = '\0';
   assert(strcmp("P", seq->start) == 0);
-  free_dna_seq(seq);
 
   seq = asnat(1);
   *seq->end = '\0';
   assert(strcmp("CP", seq->start) == 0);
-  free_dna_seq(seq);
 
   seq = asnat(2);
   *seq->end = '\0';
   assert(strcmp("ICP", seq->start) == 0);
-  free_dna_seq(seq);
 
   seq = asnat(8);
   *seq->end = '\0';
   assert(strcmp("IIICP", seq->start) == 0);
-  free_dna_seq(seq);
 
   seq = asnat(17);
   *seq->end = '\0';
   assert(strcmp("CIIICP", seq->start) == 0);
-  free_dna_seq(seq);
 }
 
 void replace_test() {
@@ -70,6 +65,8 @@ void replace_test() {
   dna_seq_t* replace_seq = replace(templates, &env);
   dna_seq_t* expected = init_dna_seq_from_str("IFPICCFICP");
   expected->size = replace_seq->size;
+  *replace_seq->end = '\0';
+  printf("replace_seq=%s\n", replace_seq->start);
   assert(dna_seq_equal(expected, replace_seq));
 
   free_dna_seq(expected);
@@ -80,6 +77,8 @@ void replace_test() {
 }
 
 int main(int unused_argc, char** unused_argv) {
+  init_asnat_table();
+
   protect_test();
   asnat_test();
   replace_test();

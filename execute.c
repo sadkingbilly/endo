@@ -22,6 +22,8 @@ void execute(char* filename) {
   rna_t rna;
   init_rna(&rna);
 
+  init_asnat_table();
+
   int iter = 0;
   time_t start_seconds = time(NULL);
   time_t elapsed_seconds;
