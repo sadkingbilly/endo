@@ -145,6 +145,9 @@ size_t protect_fast(int prot_level, dna_seq_t* dna_seq, char* out_buf, size_t ou
 /* Sequences are cached, caller should not attempt to free them. */
 /* Not thread-safe.                                              */
 dna_seq_t* asnat(int n) {
+  dna_seq_t* out;
+
+#ifdef USE_ASNAT_CACHE
   if (!(n >= 0 && n < ASNAT_TABLE_SIZE)) {
     printf("Argument to asnat() exceeds table size, n=%d\n", n);
     assert(0);
@@ -153,18 +156,22 @@ dna_seq_t* asnat(int n) {
     return asnat_table[n];
   }
 
-  int n_orig = n;
-  asnat_table[n_orig] = init_dna_seq();
+  asnat_table[n] = init_dna_seq();
+  out = asnat_table[n];
+#else
+  out = init_dna_seq();
+#endif  /* USE_ASNAT_CACHE */
+
   while (n) {
     if (n % 2) {
-      append_to_dna_seq(asnat_table[n_orig], 'C');
+      append_to_dna_seq(out, 'C');
     } else {
-      append_to_dna_seq(asnat_table[n_orig], 'I');
+      append_to_dna_seq(out, 'I');
     }
     n = n / 2;
   }
-  append_to_dna_seq(asnat_table[n_orig], 'P');
-  return asnat_table[n_orig];
+  append_to_dna_seq(out, 'P');
+  return out;
 }
 
 #define PROTECT_FAST_OUT_BUF_SIZE (32*1024*1024)
@@ -197,10 +204,13 @@ dna_seq_t* replace(titem_seq_t* template_seq, env_t* env) {
         break;
       case TITEM_LEN:
         env_seq = (*env)[titem_ptr->len];
-        /* No need to free the sequence returned by asnat(). */
         asnat_dna_seq = asnat(env_seq->end - env_seq->start);
         int asnat_dna_seq_size = asnat_dna_seq->end - asnat_dna_seq->start;
         append_to_dna_seq_from_ptr(out, asnat_dna_seq->start, asnat_dna_seq_size);
+#ifndef USE_ASNAT_CACHE
+	/* When cache is not used, asnat() allocates a new sequence. */
+	free_dna_seq(asnat_dna_seq);
+#endif  /* USE_ASNAT_CACHE */
         break;
     }
     titem_ptr++;
