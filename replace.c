@@ -145,7 +145,7 @@ size_t protect_fast(int prot_level, dna_seq_t* dna_seq, char* out_buf, size_t ou
 /* Sequences are cached, caller should not attempt to free them. */
 /* Not thread-safe.                                              */
 dna_seq_t* asnat(int n) {
-  dna_seq_t* out;
+dna_seq_t* out;
 
 #ifdef USE_ASNAT_CACHE
   if (!(n >= 0 && n < ASNAT_TABLE_SIZE)) {
