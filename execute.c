@@ -39,8 +39,10 @@ void execute(char* filename, long max_iters) {
     pitem_seq_t* p = pattern(dna, &rna);
     titem_seq_t* t = template(dna, &rna);
     dna_seq_t* new_dna = matchreplace(dna, p, t);
-    free_dna_seq(dna);
-    dna = new_dna;
+    if (new_dna != dna) {
+      free_dna_seq(dna);
+      dna = new_dna;
+    }
     free_pattern_seq(p);
     free_template_seq(t);
     iter++;

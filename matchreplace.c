@@ -33,7 +33,7 @@ dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl)
   /* we have to return early from the loop, we return the original DNA, "rebased" */
   /* at in_dna->cur.                                                              */
   dna_size = in_dna->end - in_dna->cur;
-  dna_seq_t* out_dna = init_dna_seq_from_ptr(in_dna->cur, dna_size);
+  //dna_seq_t* out_dna = init_dna_seq_from_ptr(in_dna->cur, dna_size);
   for (pitem_t* pitem = patt->start; pitem != patt->end; pitem++) {
     switch(pitem->type) {
       case PITEM_BASE:
@@ -41,14 +41,14 @@ dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl)
           i++;
         } else {
           free_env(&env, env_count);
-          return out_dna;
+          return in_dna;
         }
         break;
       case PITEM_SKIP_N:
         i = i + pitem->skip;
         if (i > (in_dna->end - in_dna->cur)) {
           free_env(&env, env_count);
-          return out_dna;
+          return in_dna;
         }
         break;
       case PITEM_DNA_SEQ:
@@ -61,7 +61,7 @@ dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl)
         if (max_n < min_n) {
           /* No viable n values due to size constraints. */
           free_env(&env, env_count);
-          return out_dna;
+          return in_dna;
         }
         matched = 0;
         for (int n = min_n; n <= max_n; n++) {
@@ -77,7 +77,7 @@ dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl)
         }
         if (!matched) {
           free_env(&env, env_count);
-          return out_dna;
+          return in_dna;
         }
         break;
       case PITEM_OPEN_GROUP:
@@ -110,8 +110,7 @@ dna_seq_t* matchreplace(dna_seq_t* in_dna, pitem_seq_t* patt, titem_seq_t* tmpl)
   replace_dna = replace(tmpl, &env);
   int replace_dna_size = replace_dna->end - replace_dna->start;
 
-  free_dna_seq(out_dna);
-  out_dna = init_dna_seq_with_size(replace_dna->size + remaining_dna_size);
+  dna_seq_t* out_dna = init_dna_seq_with_size(replace_dna->size + remaining_dna_size);
   memcpy(out_dna->start, replace_dna->start, replace_dna_size);
   memcpy(out_dna->start + replace_dna_size, in_dna->cur, remaining_dna_size);
   out_dna->end = out_dna->start + replace_dna_size + remaining_dna_size;

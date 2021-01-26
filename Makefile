@@ -8,7 +8,7 @@ DEPS := execute.o matchreplace.o pattern.o replace.o template.o dna_seq.o rna.o
 	$(CC) $(CFLAGS) $? -o $@
 
 tests: CFLAGS = -fsanitize=address -g
-tests: dna_seq_test pattern_test template_test replace_test matchreplace_test rna_test execute_test
+tests: clean dna_seq_test pattern_test template_test replace_test matchreplace_test rna_test execute_test
 	./dna_seq_test
 	./pattern_test
 	./template_test
@@ -31,6 +31,6 @@ run_prof: $(DEPS) run.o
 	$(CC) $(CFLAGS) $? $(LDFLAGS) -o $@
 
 clean:
-	rm -f *.o *_test run_*
+	rm -f *.o *_test run_* 1 Ą gmon.out out.run data/out.run
 
 .PHONY: tests clean

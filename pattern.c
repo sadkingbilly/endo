@@ -59,7 +59,6 @@ dna_seq_t* consts(dna_seq_t* dna) {
 
 /* Reads from and advances dna->cur. Does not alter dna in other ways. */
 pitem_seq_t* pattern(dna_seq_t* dna, rna_t* rna) {
-  assert(dna->cur == dna->start);
   int lvl = 0;
   pitem_seq_t* out = init_pattern_seq();
 
