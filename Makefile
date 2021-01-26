@@ -25,9 +25,10 @@ run_tcmalloc: CFLAGS = -O2 -ltcmalloc_minimal
 run_tcmalloc: $(DEPS) run.o
 	$(CC) $(CFLAGS) $? -o $@
 
-run_prof: CFLAGS = -g -pg
+run_prof: CFLAGS = -g -DPROFILER
+run_prof: LDFLAGS = -lprofiler
 run_prof: $(DEPS) run.o
-	$(CC) $(CFLAGS) $? -o $@
+	$(CC) $(CFLAGS) $? $(LDFLAGS) -o $@
 
 clean:
 	rm -f *.o *_test run_*

@@ -5,7 +5,11 @@
 #include "matchreplace.h"
 #include <time.h>
 
-void execute(char* filename) {
+#ifdef PROFILER
+#include <gperftools/profiler.h>
+#endif  /* PROFILER */
+
+void execute(char* filename, long max_iters) {
   FILE* fh = fopen(filename, "r");
   assert(fh != NULL);
   /* Determine the file size. */
@@ -28,7 +32,10 @@ void execute(char* filename) {
   int iter = 0;
   time_t start_seconds = time(NULL);
   time_t elapsed_seconds;
-  while(1) {
+#ifdef PROFILER
+  ProfilerStart("execute.prof");
+#endif
+  while(iter < max_iters || max_iters == -1) {
     pitem_seq_t* p = pattern(dna, &rna);
     titem_seq_t* t = template(dna, &rna);
     dna_seq_t* new_dna = matchreplace(dna, p, t);
@@ -42,4 +49,8 @@ void execute(char* filename) {
       printf("Completed %d iterations in %d seconds.\n", iter, elapsed_seconds);
     }
   }
+#ifdef PROFILER
+  ProfilerStop();
+  ProfilerFlush();
+#endif
 }
