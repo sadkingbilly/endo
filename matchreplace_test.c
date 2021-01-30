@@ -25,8 +25,8 @@ void matchreplace_base_test(char* input, char* expected) {
 }
 
 void matchreplace_test() {
-  // matchreplace_base_test("IIPIPICPIICICIIFICCIFPPIICCFPC", "PICFC");
-  // matchreplace_base_test("IIPIPICPIICICIIFICCIFCCCPPIICCFPC", "PIICCFCFFPC");
+  matchreplace_base_test("IIPIPICPIICICIIFICCIFPPIICCFPC", "PICFC");
+  matchreplace_base_test("IIPIPICPIICICIIFICCIFCCCPPIICCFPC", "PIICCFCFFPC");
   matchreplace_base_test("IIPIPIICPIICIICCIICFCFC", "I");
 }
 

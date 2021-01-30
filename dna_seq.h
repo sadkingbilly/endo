@@ -9,16 +9,20 @@
 /* Factor to increase the size by when we reallocate. */
 #define DNA_SEQ_SIZE_FACTOR (2)
 
-typedef struct {
+typedef struct dna_seq_t_ dna_seq_t;
+
+struct dna_seq_t_ {
   /* Start of the internal buffer. */
   char* start;
   /* Current marker, position to read from. */
   char* cur;
   /* End marker, points past the last written data char. */
   char* end;
+  /* Next segment in the chain, see dna_chain.c. */
+  dna_seq_t* next;
   /* Current size of the internal buffer. */
   size_t size;
-} dna_seq_t;
+};
 
 dna_seq_t* init_dna_seq();
 dna_seq_t* init_dna_seq_with_size(size_t size);

@@ -8,8 +8,9 @@ DEPS := execute.o matchreplace.o pattern.o replace.o template.o dna_seq.o rna.o
 	$(CC) $(CFLAGS) $? -o $@
 
 tests: CFLAGS = -fsanitize=address -g
-tests: clean dna_seq_test pattern_test template_test replace_test matchreplace_test rna_test execute_test
+tests: clean dna_chain_test dna_seq_test pattern_test template_test replace_test matchreplace_test rna_test execute_test
 	./dna_seq_test
+	./dna_chain_test
 	./pattern_test
 	./template_test
 	./replace_test

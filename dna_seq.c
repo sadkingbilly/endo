@@ -9,6 +9,7 @@ dna_seq_t* init_dna_seq_with_size(size_t size) {
   dna_seq->start = (char*) malloc(size);
   dna_seq->cur = dna_seq->start;
   dna_seq->end = dna_seq->start;
+  dna_seq->next = NULL;
   dna_seq->size = size;
   dna_seq_init_count++;
   return dna_seq;
